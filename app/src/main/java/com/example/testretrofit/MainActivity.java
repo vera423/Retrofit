@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
     private EditText editTextSearch;
     private Button buttonSearch;
 
+    private Button buttonDetalles;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             List<Movie> movies = response.body().getResults();
                             // Procesa y muestra las películas aquí
-                            for (Movie myMovie:movies){
-                                Toast.makeText(MainActivity.this, "Movie:"+myMovie.getTitle(), Toast.LENGTH_SHORT).show();
+                            for (Movie myMovie : movies) {
+                                Toast.makeText(MainActivity.this, "Movie:" + myMovie.getTitle(), Toast.LENGTH_SHORT).show();
                             }
                         }
                     }
@@ -80,50 +83,10 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Ingresa un término de búsqueda", Toast.LENGTH_SHORT).show();
                 }
             }
-        });
-    }
 
-    // Método para buscar películas
-    private void searchMovies(String query) {
-        Call<MovieResponse> call = RetrofitClient.getInstance().getMovies(API_KEY, query);
-
-        call.enqueue(new Callback<MovieResponse>() {
-            @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                if (response.isSuccessful()) {
-                    List<Movie> movies = response.body().getResults();
-                    // Procesa y muestra las películas aquí
-                    for (Movie movie : movies) {
-                        Toast.makeText(MainActivity.this, "Película: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    Toast.makeText(MainActivity.this, "Error en la respuesta: " + response.code(), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
-                // Manejar el error aquí
-                Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-
-   /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Conectar el botón desde el layout
-        btnGetMovies = findViewById(R.id.buttonPopular);
-
-        btnGetMovies.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Me traigo los datos
-                Call<MovieResponse> call = RetrofitClient.getInstance().
-                        getPopularMovies1(API_KEY);
+            // Método para buscar películas
+            private void searchMovies(String query) {
+                Call<MovieResponse> call = RetrofitClient.getInstance().getMovies(API_KEY, query);
 
                 call.enqueue(new Callback<MovieResponse>() {
                     @Override
@@ -131,22 +94,58 @@ public class MainActivity extends AppCompatActivity {
                         if (response.isSuccessful()) {
                             List<Movie> movies = response.body().getResults();
                             // Procesa y muestra las películas aquí
-                            for (Movie myMovie:movies){
-                                Toast.makeText(MainActivity.this, "Movie:"+myMovie.getTitle(), Toast.LENGTH_SHORT).show();
+                            for (Movie movie : movies) {
+                                Toast.makeText(MainActivity.this, "Película: " + movie.getTitle(), Toast.LENGTH_SHORT).show();
                             }
+                        } else {
+                            Toast.makeText(MainActivity.this, "Error en la respuesta: " + response.code(), Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<MovieResponse> call, Throwable t) {
-                        // Maneja el error aquí
-
-
+                        // Manejar el error aquí
+                        Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
+
         });
 
-*/
+        buttonDetalles = findViewById(R.id.buttonDetails);
 
+        buttonDetalles.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int movieId = 5;
+                getMovieDetails(movieId);
+
+            }
+
+            private void getMovieDetails(int movieId) {
+                Call<Movie> call = RetrofitClient.getInstance().getMovieDetails(movieId, API_KEY);
+
+                call.enqueue(new Callback<Movie>() {
+                    @Override
+                    public void onResponse(Call<Movie> call, Response<Movie> response) {
+                        if (response.isSuccessful()) {
+                            Movie movie = response.body();
+                            // Procesa y muestra los detalles de la película
+                            Toast.makeText(MainActivity.this, "Título: " + movie.getTitle() + "\nDescripción: " + movie.getOverview(), Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Error en la respuesta: " + response.code(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Movie> call, Throwable t) {
+                        // Maneja el error aquí
+                        Toast.makeText(MainActivity.this, "Error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+
+        });
     }
+}

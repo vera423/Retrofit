@@ -1,5 +1,6 @@
 package com.example.testretrofit.movies_api;
 
+import com.example.testretrofit.json_mapper.Movie;
 import com.example.testretrofit.json_mapper.MovieResponse;
 
 import retrofit2.Call;
@@ -18,4 +19,12 @@ public interface MoviesAPI {
     Call<MovieResponse> getMovies(
             @Query("api_key") String apiKey,
             @Query("query") String query);
+
+    @GET("movie/{movie_id}")
+    Call<Movie> getMovieDetails(
+            @Query("movie_id") int movieId,
+            @Query("api_key") String apiKey
+    );
+
+
 }
